@@ -17,13 +17,10 @@ import com.hmdp.utils.SystemConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
