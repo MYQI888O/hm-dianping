@@ -34,7 +34,8 @@ public class ShopController {
     @GetMapping("/{id}")
     public Result queryShopById(@PathVariable("id") Long id) {
         //用redis加入缓存机制
-        return Result.ok(shopService.queryShopById(id));
+        return shopService.queryShopById(id);
+
     }
 
     /**
@@ -58,7 +59,7 @@ public class ShopController {
     @PutMapping
     public Result updateShop(@RequestBody Shop shop) {
         // 写入数据库
-        shopService.updateById(shop);
+        shopService.updateByIdIntoRedis(shop);
         return Result.ok();
     }
 
