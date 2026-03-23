@@ -1,6 +1,7 @@
 package com.hmdp.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -35,6 +36,7 @@ public class VoucherOrder implements Serializable {
     /**
      * 下单的用户id
      */
+    @TableField(value = "user_id")
     private Long userId;
 
     /**

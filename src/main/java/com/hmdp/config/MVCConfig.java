@@ -12,10 +12,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class MVCConfig implements WebMvcConfigurer {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+    @Autowired
+    private LoginInterceptor loginInterceptor; // 注入Spring容器的实例
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+
         //登录拦截器，只负责管登录
-        registry.addInterceptor(new LoginInterceptor())
+        registry.addInterceptor(loginInterceptor)
                 .excludePathPatterns(
                         "/user/login",
                         "/user/code",
