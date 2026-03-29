@@ -26,7 +26,8 @@ public class MVCConfig implements WebMvcConfigurer {
                         "/shop/**",
                         "/shop-type/**",
                         "/upload/**",
-                        "/voucher/**").order(1);
+                        "/voucher/**",
+                        "/voucher-order/bench/**").order(1);
 
         //刷新拦截器，只负责管刷新
         registry.addInterceptor(new RefreshInterceptor(stringRedisTemplate)).addPathPatterns("/**").order(0);
