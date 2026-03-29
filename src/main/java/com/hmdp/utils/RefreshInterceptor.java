@@ -33,7 +33,8 @@ public class RefreshInterceptor implements HandlerInterceptor {
         BeanUtils.copyProperties(userMap, userDTO);
         UserHolder.saveUser(userDTO);
 
-        stringRedisTemplate.expire("login:token:"+token, 30, TimeUnit.MINUTES);
+        //stringRedisTemplate.expire("login:token:"+token, 30, TimeUnit.MINUTES);
+        stringRedisTemplate.persist("login:token:"+token);
         return true;
     }
 
