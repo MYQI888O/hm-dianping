@@ -17,4 +17,6 @@ public interface IShopService extends IService<Shop> {
     Result queryShopById(Long id);
 
     Result updateByIdIntoRedis(Shop shop);
+
+    Result queryByShopType(Integer typeId, Integer current, Double x, Double y);
 }
