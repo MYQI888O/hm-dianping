@@ -14,14 +14,19 @@ import com.hmdp.mapper.UserMapper;
 import com.hmdp.service.IUserService;
 import com.hmdp.utils.RegexUtils;
 import com.hmdp.utils.SystemConstants;
+import com.hmdp.utils.UserHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.connection.BitFieldSubCommands;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -100,6 +105,59 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         stringRedisTemplate.persist("login:token:"+token);
 
         return Result.ok(token);
+    }
+
+    @Override
+    public Result sign() {
+        //实现用户签到功能
+        //1.获取用户id
+        Long userId = UserHolder.getUser().getId();
+        //2.获取当前时间（月份）
+        LocalDateTime now = LocalDateTime.now();
+        //3.把时间变为key
+        String time = now.format(DateTimeFormatter.ofPattern("yyyyMM"));
+        String key = "sign:" + userId + ":" + time;
+        //4.获取今日具体是第几天
+        int day = now.getDayOfMonth();
+        //5.填入redis
+        stringRedisTemplate.opsForValue().setBit(key, day - 1,  true);
+        return Result.ok();
+    }
+
+    @Override
+    public Result signCount() {
+        //实现统计用户连续签到功能
+        //1.获取用户id
+        Long userId = UserHolder.getUser().getId();
+        //2.获取当前时间（月份）
+        LocalDateTime now = LocalDateTime.now();
+        //3.把时间变为key
+        String time = now.format(DateTimeFormatter.ofPattern("yyyyMM"));
+        String key = "sign:" + userId + ":" + time;
+        //4.获取今日具体是第几天
+        int day = now.getDayOfMonth();
+        List<Long> bitField = stringRedisTemplate.opsForValue().bitField(
+                key,
+                BitFieldSubCommands.create()
+                        .get(BitFieldSubCommands.BitFieldType.unsigned(day)).valueAt(0)
+        );
+        if (bitField == null || bitField.isEmpty()){
+            return Result.ok();
+        }
+        Long signDays = bitField.get(0);
+        if (signDays == null || signDays == 0){
+            return Result.ok();
+        }
+        int count = 0;
+        while (true){
+            if((signDays & 1) == 0){
+                break;
+            }else {
+                count ++;
+            }
+            signDays = signDays >> 1;
+        }
+        return Result.ok(count);
     }
 
     private User createUserWithPhone(String phone) {
